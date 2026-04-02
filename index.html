@@ -42,6 +42,12 @@
 
   --shadow-float: 0 8px 32px rgba(0,0,0,0.4);
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --editor-font-family: 'Cascadia Code', 'Consolas', monospace;
+  --preview-font-family: 'Georgia', 'Cambria', serif;
+  --editor-font-size: 14px;
+  --preview-font-size: 15px;
+  --note-card-padding: 14px;
+  --editor-padding: 28px 48px;
 }
 
 html, body {
@@ -165,6 +171,41 @@ html, body {
 .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
 .sidebar-nav::-webkit-scrollbar-thumb { background: var(--surface-4); border-radius: 2px; }
 
+.notebook-list {
+  padding: 0 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notebook-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-s);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 12px;
+  transition: background var(--transition);
+}
+
+.notebook-item:hover,
+.notebook-item.active {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+.notebook-item .count {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.notebook-add {
+  margin: 0 14px 12px;
+}
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -245,12 +286,19 @@ html, body {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
+  gap: 10px;
 }
 
 .note-list-header h2 {
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
+}
+
+.note-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .note-list-sort {
@@ -264,6 +312,23 @@ html, body {
 
 .note-list-sort:hover { background: var(--surface-2); }
 
+.toolbar-chip-btn {
+  padding: 5px 9px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.toolbar-chip-btn:hover {
+  background: var(--surface-3);
+  color: var(--text-primary);
+}
+
 .note-list-items {
   flex: 1;
   overflow-y: auto;
@@ -275,7 +340,7 @@ html, body {
 .note-list-items::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
 
 .note-card {
-  padding: 14px 14px;
+  padding: var(--note-card-padding);
   border-radius: var(--radius-m);
   cursor: pointer;
   transition: all var(--transition);
@@ -398,6 +463,8 @@ html, body {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .save-status {
@@ -426,6 +493,250 @@ html, body {
   z-index: 1;
 }
 
+.note-meta-bar {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 2;
+  flex-wrap: wrap;
+}
+
+.note-meta-label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.tag-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(90, 184, 122, 0.1);
+  border: 1px solid rgba(90, 184, 122, 0.16);
+  color: var(--green-200);
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.tag-chip button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.tag-input {
+  min-width: 160px;
+  padding: 7px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+  font-family: inherit;
+}
+
+.tag-input:focus {
+  border-color: var(--border-active);
+}
+
+.notebook-select,
+.settings-select,
+.settings-input {
+  min-width: 140px;
+  padding: 7px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+  font-family: inherit;
+}
+
+.note-meta-spacer {
+  margin-left: auto;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-field label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.history-modal,
+.quick-search-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 8, 5, 0.72);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.history-modal.show,
+.quick-search-modal.show {
+  display: flex;
+}
+
+.modal-panel {
+  width: min(760px, 100%);
+  max-height: min(82vh, 900px);
+  background: linear-gradient(180deg, rgba(18, 35, 26, 0.98), rgba(8, 15, 11, 0.98));
+  border: 1px solid var(--border-active);
+  border-radius: 18px;
+  box-shadow: var(--shadow-float);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.modal-body {
+  overflow: auto;
+  padding: 12px;
+}
+
+.history-list,
+.quick-search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-item,
+.quick-result {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-m);
+  padding: 14px;
+}
+
+.quick-result {
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.quick-result.active,
+.quick-result:hover {
+  background: var(--surface-2);
+  border-color: var(--border-active);
+}
+
+.history-item-header,
+.quick-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.history-item-title,
+.quick-result-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.history-item-meta,
+.quick-result-meta {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.history-item-preview,
+.quick-result-preview {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.history-item-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.history-empty,
+.quick-search-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.quick-search-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 12px;
+  font-family: inherit;
+}
+
+.quick-search-help {
+  padding: 0 4px 10px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
 .editor-write {
   flex: 1;
   display: flex;
@@ -439,10 +750,10 @@ html, body {
   outline: none;
   background: transparent;
   color: var(--text-primary);
-  font-family: 'Cascadia Code', 'Consolas', monospace;
-  font-size: 14px;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
   line-height: 1.8;
-  padding: 28px 48px;
+  padding: var(--editor-padding);
   tab-size: 2;
   caret-color: var(--green-400);
 }
@@ -460,7 +771,7 @@ html, body {
 .editor-preview {
   flex: 1;
   overflow-y: auto;
-  padding: 28px 48px;
+  padding: var(--editor-padding);
   display: none;
 }
 
@@ -473,8 +784,8 @@ html, body {
 
 /* ── Markdown Preview Styles ── */
 .editor-preview {
-  font-family: 'Georgia', 'Cambria', serif;
-  font-size: 15px;
+  font-family: var(--preview-font-family);
+  font-size: var(--preview-font-size);
   line-height: 1.8;
   color: var(--text-primary);
 }
@@ -653,7 +964,7 @@ html, body {
 @media (max-width: 860px) {
   .sidebar { width: 56px; min-width: 56px; }
   .sidebar-header h1, .sidebar-search, .sidebar-section-title,
-  .nav-item span, .nav-count { display: none; }
+  .nav-item span, .nav-count, .notebook-list, .notebook-add { display: none; }
   .sidebar-header { justify-content: center; padding: 16px 0 12px; }
   .nav-item { justify-content: center; padding: 10px; }
   .sidebar-footer { padding: 8px; }
@@ -705,6 +1016,11 @@ html, body {
         <span class="nav-count" id="countArchived">0</span>
       </div>
     </nav>
+    <div class="sidebar-section-title">笔记本</div>
+    <div class="notebook-list" id="notebookList"></div>
+    <div class="notebook-add">
+      <button class="toolbar-chip-btn" id="btnNewNotebook" type="button">新建笔记本</button>
+    </div>
     <div class="sidebar-footer">
       <button class="btn-new" id="btnNew">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -717,7 +1033,10 @@ html, body {
   <section class="note-list">
     <div class="note-list-header">
       <h2>全部笔记</h2>
-      <span class="note-list-sort" id="sortToggle">最近修改</span>
+      <div class="note-list-actions">
+        <button class="toolbar-chip-btn" id="btnQuickSearch" title="快速搜索 Ctrl+K">搜索</button>
+        <span class="note-list-sort" id="sortToggle">最近修改</span>
+      </div>
     </div>
     <div class="note-list-items" id="noteListItems"></div>
   </section>
@@ -740,6 +1059,18 @@ html, body {
       <button class="toolbar-btn" title="标题" data-action="heading">H</button>
       <button class="toolbar-btn" title="引用" data-action="quote">"</button>
       <div class="toolbar-right">
+        <button class="toolbar-chip-btn" id="btnRestore" title="从备份还原">还原</button>
+        <button class="toolbar-chip-btn" id="btnExport" title="导出当前笔记">导出</button>
+        <button class="toolbar-chip-btn" id="btnExportAll" title="导出全部 Markdown">导出全部</button>
+        <button class="toolbar-chip-btn" id="btnPdf" title="导出 PDF">PDF</button>
+        <button class="toolbar-chip-btn" id="btnPrint" title="打印当前笔记">打印</button>
+        <button class="toolbar-chip-btn" id="btnBackup" title="备份全部笔记">备份</button>
+        <button class="toolbar-chip-btn" id="btnImport" title="导入 Markdown">导入</button>
+        <button class="toolbar-chip-btn" id="btnHistory" title="查看版本历史">历史</button>
+        <button class="toolbar-chip-btn" id="btnPin" title="置顶笔记">置顶</button>
+        <button class="toolbar-chip-btn" id="btnMoveUp" title="手动上移">上移</button>
+        <button class="toolbar-chip-btn" id="btnMoveDown" title="手动下移">下移</button>
+        <button class="toolbar-chip-btn" id="btnSettings" title="显示设置">设置</button>
         <span class="save-status" id="saveStatus"></span>
         <span class="word-count" id="wordCount">0 字</span>
         <div class="toolbar-sep"></div>
@@ -754,6 +1085,15 @@ html, body {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
         </button>
       </div>
+    </div>
+    <div class="note-meta-bar" id="noteMetaBar">
+      <span class="note-meta-label">笔记本</span>
+      <select class="notebook-select" id="notebookSelect"></select>
+      <span class="note-meta-label">标签</span>
+      <div class="tag-list" id="tagList"></div>
+      <input class="tag-input" id="tagInput" type="text" placeholder="输入标签后按 Enter" />
+      <span class="note-meta-spacer"></span>
+      <span class="note-meta-label" id="lastOpenedLabel"></span>
     </div>
     <div class="editor-container" id="editorContainer" style="display:none">
       <div class="editor-write" id="editorWrite">
@@ -774,719 +1114,79 @@ html, body {
   <div class="context-menu-item danger" data-action="delete">🗑 删除</div>
 </div>
 
-<script>
-// ── State ──
-let notes = [];
-let activeNoteId = null;
-let currentFilter = 'all';
-let isPreview = false;
-let contextNoteId = null;
-let saveTimer = null;
-let saveQueue = Promise.resolve();
-let saveStatusTimer = null;
+<div class="history-modal" id="historyModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">版本历史</div>
+      <button class="modal-close" id="btnCloseHistory" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="history-list" id="historyList"></div>
+      <div class="history-empty" id="historyEmpty" style="display:none">这篇笔记还没有历史快照。</div>
+    </div>
+  </div>
+</div>
 
-// ── Elements ──
-const $ = id => document.getElementById(id);
-const editor = $('editor');
-const editorToolbar = $('editorToolbar');
-const editorContainer = $('editorContainer');
-const emptyState = $('emptyState');
-const editorWrite = $('editorWrite');
-const editorPreview = $('editorPreview');
-const noteListItems = $('noteListItems');
-const searchInput = $('searchInput');
-const saveStatus = $('saveStatus');
-const wordCount = $('wordCount');
-const btnPreview = $('btnPreview');
-const btnStar = $('btnStar');
-const starIcon = $('starIcon');
-const contextMenu = $('contextMenu');
-const imageInput = $('imageInput');
+<div class="quick-search-modal" id="quickSearchModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">快速搜索</div>
+      <button class="modal-close" id="btnCloseQuickSearch" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <input class="quick-search-input" id="quickSearchInput" type="text" placeholder="搜索标题、内容或标签…" />
+      <div class="quick-search-help">Enter 打开，↑ ↓ 切换，Esc 关闭</div>
+      <div class="quick-search-results" id="quickSearchResults"></div>
+      <div class="quick-search-empty" id="quickSearchEmpty" style="display:none">没有找到匹配的笔记。</div>
+    </div>
+  </div>
+</div>
 
-// ── Persistence ──
-function cloneNotes() {
-  return notes.map(note => ({ ...note }));
-}
-
-function setSaveStatus(text = '', tone = '') {
-  clearTimeout(saveStatusTimer);
-  saveStatus.textContent = text;
-  saveStatus.className = 'save-status';
-
-  if (tone) saveStatus.classList.add(tone);
-
-  if (tone === 'saved') {
-    saveStatusTimer = setTimeout(() => {
-      saveStatus.textContent = '';
-      saveStatus.className = 'save-status';
-    }, 1200);
-  }
-}
-
-function loadLegacyNotes() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem('pine-notes') || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) {
-    console.error('Failed to parse legacy notes', error);
-    return [];
-  }
-}
-
-function clearLegacyNotes() {
-  localStorage.removeItem('pine-notes');
-}
-
-function persistNotes() {
-  if (!window.notesApi) {
-    setSaveStatus('存储不可用', 'error');
-    return Promise.resolve();
-  }
-
-  const payload = cloneNotes();
-  setSaveStatus('保存中…');
-
-  saveQueue = saveQueue.catch(() => {}).then(async () => {
-    await window.notesApi.saveNotes(payload);
-    clearLegacyNotes();
-    setSaveStatus('已保存', 'saved');
-  }).catch(error => {
-    console.error('Failed to save notes', error);
-    setSaveStatus('保存失败', 'error');
-  });
-
-  return saveQueue;
-}
-
-function queueSave() {
-  clearTimeout(saveTimer);
-  setSaveStatus('待保存');
-  saveTimer = setTimeout(() => {
-    void persistNotes();
-  }, 250);
-}
-
-// ── Note CRUD ──
-function createNote() {
-  const note = {
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-    title: '无标题笔记',
-    content: '',
-    starred: false,
-    archived: false,
-    created: Date.now(),
-    updated: Date.now()
-  };
-  notes.unshift(note);
-  renderList();
-  selectNote(note.id);
-  void persistNotes();
-  editor.focus();
-}
-
-function deleteNote(id) {
-  notes = notes.filter(n => n.id !== id);
-
-  if (activeNoteId === id) {
-    const nextVisible = getFilteredNotes()[0] || null;
-    activeNoteId = nextVisible ? nextVisible.id : null;
-  }
-
-  renderList();
-  if (activeNoteId) selectNote(activeNoteId);
-  else showEmpty();
-  void persistNotes();
-}
-
-function duplicateNote(id) {
-  const src = notes.find(n => n.id === id);
-  if (!src) return;
-  const dup = { ...src, id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title: src.title + ' (副本)', created: Date.now(), updated: Date.now() };
-  notes.unshift(dup);
-  renderList();
-  selectNote(dup.id);
-  void persistNotes();
-}
-
-function syncActiveNoteAfterVisibilityChange(changedId) {
-  if (activeNoteId !== changedId) return false;
-
-  const activeNote = notes.find(n => n.id === changedId);
-  if (activeNote && matchesCurrentFilter(activeNote)) return false;
-
-  const nextVisible = getFilteredNotes().find(note => note.id !== changedId) || null;
-  activeNoteId = nextVisible ? nextVisible.id : null;
-  return true;
-}
-
-function syncActiveNoteToCurrentFilter() {
-  if (!activeNoteId) return false;
-
-  const activeNote = notes.find(note => note.id === activeNoteId);
-  if (activeNote && matchesCurrentFilter(activeNote)) return false;
-
-  const nextVisible = getFilteredNotes()[0] || null;
-  activeNoteId = nextVisible ? nextVisible.id : null;
-  return true;
-}
-
-function toggleStar(id) {
-  const note = notes.find(n => n.id === id);
-  if (!note) return;
-
-  note.starred = !note.starred;
-  const selectionChanged = syncActiveNoteAfterVisibilityChange(id);
-  renderList();
-
-  if (selectionChanged) {
-    if (activeNoteId) selectNote(activeNoteId);
-    else showEmpty();
-  } else if (activeNoteId === id) {
-    updateStarBtn();
-  }
-
-  void persistNotes();
-}
-
-function archiveNote(id) {
-  const note = notes.find(n => n.id === id);
-  if (!note) return;
-
-  note.archived = !note.archived;
-  const selectionChanged = syncActiveNoteAfterVisibilityChange(id);
-  renderList();
-
-  if (selectionChanged) {
-    if (activeNoteId) selectNote(activeNoteId);
-    else showEmpty();
-  }
-
-  void persistNotes();
-}
-
-// ── Select Note ──
-function selectNote(id) {
-  activeNoteId = id;
-  const note = notes.find(n => n.id === id);
-  if (!note) return showEmpty();
-
-  emptyState.style.display = 'none';
-  editorToolbar.style.display = 'flex';
-  editorContainer.style.display = 'flex';
-
-  editor.value = note.content;
-  updateWordCount();
-  updateStarBtn();
-
-  if (isPreview) renderPreview();
-
-  document.querySelectorAll('.note-card').forEach(c => c.classList.toggle('active', c.dataset.id === id));
-}
-
-function showEmpty() {
-  emptyState.style.display = 'flex';
-  editorToolbar.style.display = 'none';
-  editorContainer.style.display = 'none';
-}
-
-// ── Render List ──
-function matchesCurrentFilter(note) {
-  if (currentFilter === 'starred') return note.starred && !note.archived;
-  if (currentFilter === 'archived') return note.archived;
-  return !note.archived;
-}
-
-function getFilteredNotes() {
-  const search = searchInput.value.toLowerCase().trim();
-  let filtered = notes.filter(matchesCurrentFilter);
-
-  if (search) {
-    filtered = filtered.filter(n =>
-      n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search)
-    );
-  }
-
-  return filtered.sort((a, b) => b.updated - a.updated);
-}
-
-function renderList() {
-  const filtered = getFilteredNotes();
-  noteListItems.innerHTML = filtered.map((n, i) => {
-    const preview = n.content.replace(/[#*`>\[\]_~\-\|]/g, '').trim().slice(0, 100);
-    const date = formatDate(n.updated);
-    return `
-      <div class="note-card ${n.id === activeNoteId ? 'active' : ''}" data-id="${n.id}" style="animation-delay:${i * 30}ms"
-           oncontextmenu="showContextMenu(event, '${n.id}')">
-        <div class="note-card-title">${escapeHtml(n.title)}</div>
-        <div class="note-card-preview">${escapeHtml(preview) || '空笔记'}</div>
-        <div class="note-card-meta">
-          <span>${date}</span>
-          ${n.starred ? '<span class="tag">⭐ 收藏</span>' : ''}
+<div class="history-modal" id="settingsModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <div class="modal-title">显示与编辑设置</div>
+      <button class="modal-close" id="btnCloseSettings" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-grid">
+        <div class="settings-field">
+          <label for="themeSelect">主题</label>
+          <select class="settings-select" id="themeSelect">
+            <option value="forest">Forest</option>
+            <option value="paper">Paper</option>
+            <option value="midnight">Midnight</option>
+          </select>
+        </div>
+        <div class="settings-field">
+          <label for="editorFontSizeInput">编辑字体大小</label>
+          <input class="settings-input" id="editorFontSizeInput" type="number" min="12" max="24" step="1" />
+        </div>
+        <div class="settings-field">
+          <label for="previewFontSizeInput">预览字体大小</label>
+          <input class="settings-input" id="previewFontSizeInput" type="number" min="12" max="28" step="1" />
+        </div>
+        <div class="settings-field">
+          <label for="editorFontFamilyInput">编辑字体</label>
+          <input class="settings-input" id="editorFontFamilyInput" type="text" />
+        </div>
+        <div class="settings-field">
+          <label for="previewFontFamilyInput">预览字体</label>
+          <input class="settings-input" id="previewFontFamilyInput" type="text" />
+        </div>
+        <div class="settings-field">
+          <label for="uiDensitySelect">界面密度</label>
+          <select class="settings-select" id="uiDensitySelect">
+            <option value="compact">Compact</option>
+            <option value="comfortable">Comfortable</option>
+            <option value="airy">Airy</option>
+          </select>
         </div>
       </div>
-    `;
-  }).join('');
-
-  document.querySelectorAll('.note-card').forEach(card => {
-    card.addEventListener('click', () => selectNote(card.dataset.id));
-  });
-
-  // Update counts
-  $('countAll').textContent = notes.filter(n => !n.archived).length;
-  $('countStarred').textContent = notes.filter(n => n.starred && !n.archived).length;
-  $('countArchived').textContent = notes.filter(n => n.archived).length;
-
-  // Update list header
-  const titles = { all: '全部笔记', starred: '收藏', archived: '归档' };
-  document.querySelector('.note-list-header h2').textContent = titles[currentFilter];
-}
-
-// ── Editor ──
-editor.addEventListener('input', () => {
-  const note = notes.find(n => n.id === activeNoteId);
-  if (!note) return;
-
-  note.content = editor.value;
-  note.updated = Date.now();
-
-  // Extract title from first line
-  const firstLine = editor.value.split('\n')[0].replace(/^#+\s*/, '').trim();
-  note.title = firstLine || '无标题笔记';
-
-  updateWordCount();
-  renderList();
-  queueSave();
-
-  if (isPreview) renderPreview();
-});
-
-// ── Preview ──
-function togglePreview() {
-  isPreview = !isPreview;
-  btnPreview.classList.toggle('active', isPreview);
-  editorWrite.classList.toggle('hidden', isPreview);
-  editorPreview.classList.toggle('visible', isPreview);
-  if (isPreview) renderPreview();
-}
-
-function escapeRawHtml(markdown) {
-  return markdown
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function isSafeLinkUrl(value) {
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-  if (trimmed.startsWith('#')) return true;
-
-  try {
-    const url = new URL(trimmed, window.location.href);
-    return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol);
-  } catch {
-    return false;
-  }
-}
-
-function isSafeImageUrl(value) {
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-  if (/^data:image\/(?:png|jpeg|jpg|webp|gif);base64,[a-z0-9+/=]+$/i.test(trimmed)) return true;
-
-  try {
-    const url = new URL(trimmed, window.location.href);
-    return ['file:', 'http:', 'https:'].includes(url.protocol);
-  } catch {
-    return false;
-  }
-}
-
-function sanitizeRenderedHtml(html) {
-  const template = document.createElement('template');
-  template.innerHTML = html;
-  const allowedTags = new Set([
-    'a', 'blockquote', 'br', 'code', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-    'hr', 'img', 'input', 'li', 'ol', 'p', 'pre', 'strong', 'table', 'tbody',
-    'td', 'th', 'thead', 'tr', 'ul'
-  ]);
-
-  const sanitizeNode = parent => {
-    Array.from(parent.childNodes).forEach(node => {
-      if (node.nodeType === Node.COMMENT_NODE) {
-        node.remove();
-        return;
-      }
-
-      if (node.nodeType !== Node.ELEMENT_NODE) return;
-
-      const tag = node.tagName.toLowerCase();
-      if (!allowedTags.has(tag)) {
-        node.replaceWith(document.createTextNode(node.outerHTML));
-        return;
-      }
-
-      Array.from(node.attributes).forEach(attr => {
-        const name = attr.name.toLowerCase();
-        const value = attr.value;
-
-        if (name.startsWith('on')) {
-          node.removeAttribute(attr.name);
-          return;
-        }
-
-        if (tag === 'a') {
-          if (name === 'href' && isSafeLinkUrl(value)) return;
-          if (name === 'title') return;
-          node.removeAttribute(attr.name);
-          return;
-        }
-
-        if (tag === 'img') {
-          if (name === 'src' && isSafeImageUrl(value)) return;
-          if (name === 'alt' || name === 'title') return;
-          node.removeAttribute(attr.name);
-          return;
-        }
-
-        if (tag === 'input') {
-          if (name === 'type' && value === 'checkbox') return;
-          if (name === 'checked') return;
-          node.removeAttribute(attr.name);
-          return;
-        }
-
-        node.removeAttribute(attr.name);
-      });
-
-      if (tag === 'a') {
-        node.setAttribute('target', '_blank');
-        node.setAttribute('rel', 'noreferrer noopener');
-      }
-
-      if (tag === 'input') {
-        if (node.getAttribute('type') !== 'checkbox') {
-          node.replaceWith(document.createTextNode(node.outerHTML));
-          return;
-        }
-        node.setAttribute('disabled', 'disabled');
-      }
-
-      sanitizeNode(node);
-    });
-  };
-
-  sanitizeNode(template.content);
-  return template.innerHTML;
-}
-
-function renderPreview() {
-  if (typeof marked === 'undefined') {
-    editorPreview.textContent = 'Markdown 预览暂时不可用。';
-    return;
-  }
-
-  const safeMarkdown = escapeRawHtml(editor.value || '*空笔记*');
-  const rendered = marked.parse(safeMarkdown, { breaks: true, gfm: true });
-  editorPreview.innerHTML = sanitizeRenderedHtml(rendered);
-}
-
-// ── Toolbar Actions ──
-function insertMarkdown(action) {
-  const ta = editor;
-  const start = ta.selectionStart;
-  const end = ta.selectionEnd;
-  const sel = ta.value.substring(start, end);
-  let before = '', after = '';
-
-  switch (action) {
-    case 'bold': before = '**'; after = '**'; break;
-    case 'italic': before = '*'; after = '*'; break;
-    case 'code': before = sel.includes('\n') ? '```\n' : '`'; after = sel.includes('\n') ? '\n```' : '`'; break;
-    case 'link': before = '['; after = '](url)'; break;
-    case 'list': before = '- '; break;
-    case 'todo': before = '- [ ] '; break;
-    case 'heading': before = '## '; break;
-    case 'quote': before = '> '; break;
-  }
-
-  const replacement = before + (sel || '文本') + after;
-  ta.setRangeText(replacement, start, end, 'end');
-  ta.dispatchEvent(new Event('input'));
-  ta.focus();
-}
-
-document.querySelectorAll('.toolbar-btn[data-action]').forEach(btn => {
-  btn.addEventListener('click', () => insertMarkdown(btn.dataset.action));
-});
-
-// ── Star Button ──
-function updateStarBtn() {
-  const note = notes.find(n => n.id === activeNoteId);
-  if (note && note.starred) {
-    starIcon.setAttribute('fill', 'currentColor');
-    btnStar.classList.add('active');
-  } else {
-    starIcon.setAttribute('fill', 'none');
-    btnStar.classList.remove('active');
-  }
-}
-
-btnStar.addEventListener('click', () => { if (activeNoteId) toggleStar(activeNoteId); });
-$('btnDelete').addEventListener('click', () => { if (activeNoteId && confirm('确认删除这篇笔记？')) deleteNote(activeNoteId); });
-btnPreview.addEventListener('click', togglePreview);
-$('btnNew').addEventListener('click', createNote);
-
-// ── Sidebar Nav ──
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-    currentFilter = item.dataset.filter;
-    const selectionChanged = syncActiveNoteToCurrentFilter();
-    renderList();
-    if (selectionChanged) {
-      if (activeNoteId) selectNote(activeNoteId);
-      else showEmpty();
-    }
-  });
-});
-
-// ── Search ──
-searchInput.addEventListener('input', renderList);
-
-// ── Context Menu ──
-function showContextMenu(e, id) {
-  e.preventDefault();
-  contextNoteId = id;
-  contextMenu.style.left = e.clientX + 'px';
-  contextMenu.style.top = e.clientY + 'px';
-  contextMenu.classList.add('show');
-}
-
-document.addEventListener('click', () => contextMenu.classList.remove('show'));
-
-contextMenu.querySelectorAll('.context-menu-item').forEach(item => {
-  item.addEventListener('click', () => {
-    if (!contextNoteId) return;
-    switch (item.dataset.action) {
-      case 'star': toggleStar(contextNoteId); break;
-      case 'archive': archiveNote(contextNoteId); break;
-      case 'duplicate': duplicateNote(contextNoteId); break;
-      case 'delete': if (confirm('确认删除？')) deleteNote(contextNoteId); break;
-    }
-    contextMenu.classList.remove('show');
-  });
-});
-
-// ── Image Handling ──
-function readResizedImage(file) {
-  return new Promise((resolve, reject) => {
-    if (!file || !file.type.startsWith('image/')) {
-      reject(new Error('Unsupported image file'));
-      return;
-    }
-
-    const maxSize = 800;
-    const reader = new FileReader();
-
-    reader.onerror = () => reject(new Error('Failed to read image'));
-    reader.onload = event => {
-      const img = new Image();
-
-      img.onerror = () => reject(new Error('Failed to decode image'));
-      img.onload = () => {
-        let w = img.width;
-        let h = img.height;
-
-        if (w > maxSize || h > maxSize) {
-          if (w > h) {
-            h = Math.round(h * maxSize / w);
-            w = maxSize;
-          } else {
-            w = Math.round(w * maxSize / h);
-            h = maxSize;
-          }
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.8));
-      };
-
-      img.src = event.target.result;
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
-
-async function processImageFile(file) {
-  try {
-    const dataUrl = await readResizedImage(file);
-    const storedUrl = await window.notesApi.saveImage(dataUrl);
-    insertImageAtCursor(storedUrl);
-  } catch (error) {
-    console.error('Failed to process image', error);
-    setSaveStatus('图片保存失败', 'error');
-  }
-}
-
-function insertImageAtCursor(fileUrl) {
-  const ta = editor;
-  const start = ta.selectionStart;
-  const markdown = `![图片](<${fileUrl}>)\n`;
-  ta.setRangeText(markdown, start, ta.selectionEnd, 'end');
-  ta.dispatchEvent(new Event('input'));
-  ta.focus();
-}
-
-// Toolbar button
-$('btnImage').addEventListener('click', () => { imageInput.click(); });
-
-imageInput.addEventListener('change', async () => {
-  for (const file of Array.from(imageInput.files || [])) {
-    await processImageFile(file);
-  }
-  imageInput.value = '';
-});
-
-// Paste image from clipboard
-editor.addEventListener('paste', (e) => {
-  const items = e.clipboardData && e.clipboardData.items;
-  if (!items) return;
-  for (const item of items) {
-    if (item.type.startsWith('image/')) {
-      e.preventDefault();
-      void processImageFile(item.getAsFile());
-      return;
-    }
-  }
-});
-
-// Drag & drop image
-editor.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; });
-editor.addEventListener('drop', (e) => {
-  const files = e.dataTransfer && e.dataTransfer.files;
-  if (!files) return;
-  for (const file of files) {
-    if (file.type.startsWith('image/')) {
-      e.preventDefault();
-      void processImageFile(file);
-    }
-  }
-});
-
-// ── Keyboard Shortcuts ──
-document.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.key === 'n') { e.preventDefault(); createNote(); }
-  if (e.ctrlKey && e.key === 'p') { e.preventDefault(); if (activeNoteId) togglePreview(); }
-  if (e.ctrlKey && e.key === 'b') { e.preventDefault(); insertMarkdown('bold'); }
-  if (e.ctrlKey && e.key === 'i') { e.preventDefault(); insertMarkdown('italic'); }
-});
-
-// ── Helpers ──
-function updateWordCount() {
-  const text = editor.value.trim();
-  const chars = text.length;
-  wordCount.textContent = `${chars} 字`;
-}
-
-function formatDate(ts) {
-  const d = new Date(ts);
-  const now = new Date();
-  const diff = now - d;
-  if (diff < 60000) return '刚刚';
-  if (diff < 3600000) return Math.floor(diff / 60000) + ' 分钟前';
-  if (diff < 86400000) return Math.floor(diff / 3600000) + ' 小时前';
-  if (diff < 604800000) return Math.floor(diff / 86400000) + ' 天前';
-  return `${d.getMonth() + 1}/${d.getDate()}`;
-}
-
-function escapeHtml(s) {
-  const div = document.createElement('div');
-  div.textContent = s;
-  return div.innerHTML;
-}
-
-function createWelcomeNote() {
-  return {
-    id: 'welcome',
-    title: '欢迎使用 Pine Notes 🌲',
-    content: `# 欢迎使用 Pine Notes 🌲
-
-一款极简的 Markdown 笔记应用。
-
-## 功能
-
-- **Markdown 支持** — 实时编写，按 \`Ctrl+P\` 切换预览
-- **收藏笔记** — 为重要笔记加星标
-- **搜索** — 快速查找你的笔记
-- **归档** — 右键归档不再需要的笔记
-- **快捷键** — \`Ctrl+N\` 新建，\`Ctrl+B\` 粗体，\`Ctrl+I\` 斜体
-
-## Markdown 示例
-
-> 好的工具应该像空气一样，存在但不打扰。
-
-### 代码块
-
-\`\`\`javascript
-const greeting = "Hello, Pine Notes!";
-console.log(greeting);
-\`\`\`
-
-### 清单
-
-- [x] 搭建应用框架
-- [x] 实现 Markdown 预览
-- [ ] 添加更多主题
-- [ ] 导出功能
-
----
-
-*所有数据保存在本机，安全私密。*`,
-    starred: true,
-    archived: false,
-    created: Date.now(),
-    updated: Date.now()
-  };
-}
-
-// ── Init ──
-async function init() {
-  const legacyNotes = loadLegacyNotes();
-
-  if (window.notesApi) {
-    try {
-      const storedNotes = await window.notesApi.loadNotes();
-      if (storedNotes.length > 0) {
-        notes = storedNotes;
-        clearLegacyNotes();
-      } else if (legacyNotes.length > 0) {
-        notes = legacyNotes;
-        await persistNotes();
-      } else {
-        notes = [createWelcomeNote()];
-        await persistNotes();
-      }
-    } catch (error) {
-      console.error('Failed to load notes', error);
-      setSaveStatus('读取失败', 'error');
-      notes = legacyNotes.length > 0 ? legacyNotes : [createWelcomeNote()];
-    }
-  } else {
-    setSaveStatus('存储不可用', 'error');
-    notes = legacyNotes.length > 0 ? legacyNotes : [createWelcomeNote()];
-  }
-
-  renderList();
-  if (notes.length > 0) selectNote(notes[0].id);
-}
-
-void init();
-</script>
+    </div>
+  </div>
+</div>
+
+<script src="./renderer.js"></script>
 </body>
 </html>
