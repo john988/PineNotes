@@ -2,7 +2,7 @@
 
 Pine Notes is a minimal desktop Markdown notes app built with Electron.
 
-It focuses on fast capture, a calm writing surface, and simple local-first storage. Notes stay on your machine, support Markdown preview, and can be packaged as both an installer and a portable Windows executable.
+It focuses on fast capture, a calm writing surface, and simple local-first storage. Notes stay on your machine, support Markdown preview, and can be packaged as a portable Windows executable.
 
 ## Highlights
 
@@ -11,7 +11,7 @@ It focuses on fast capture, a calm writing surface, and simple local-first stora
 - Starred notes, archive view, and search
 - Image paste / drag-and-drop support
 - Local file-based persistence for notes and embedded images
-- Windows installer build and portable `.exe` build
+- Portable Windows `.exe` build
 
 ## Why This Project Exists
 
@@ -52,19 +52,13 @@ npm start
 
 ## Build
 
-Build both the installer and portable executable:
+Build the portable executable:
 
 ```bash
 npm run build
 ```
 
-Build installer only:
-
-```bash
-npm run build:installer
-```
-
-Build portable executable only:
+Build portable executable explicitly:
 
 ```bash
 npm run build:portable
@@ -72,7 +66,6 @@ npm run build:portable
 
 Typical build outputs:
 
-- `dist/PineNotes-Setup-<version>.exe`
 - `dist/PineNotes-Portable-<version>.exe`
 
 ## Storage

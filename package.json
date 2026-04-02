@@ -5,8 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder --win nsis portable",
-    "build:installer": "electron-builder --win nsis",
+    "build": "electron-builder --win portable",
     "build:portable": "electron-builder --win portable",
     "icon": "electron generate-icon.js"
   },
@@ -14,19 +13,9 @@
     "appId": "com.pinenotes.app",
     "productName": "Pine Notes",
     "win": {
-      "target": "nsis",
+      "target": "portable",
       "icon": "icon.ico",
       "signAndEditExecutable": false
-    },
-    "nsis": {
-      "oneClick": true,
-      "perMachine": false,
-      "createDesktopShortcut": "always",
-      "createStartMenuShortcut": true,
-      "shortcutName": "Pine Notes",
-      "artifactName": "PineNotes-Setup-${version}.exe",
-      "installerIcon": "icon.ico",
-      "uninstallerIcon": "icon.ico"
     },
     "portable": {
       "artifactName": "PineNotes-Portable-${version}.exe"
