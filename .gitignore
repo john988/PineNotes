@@ -2,4 +2,8 @@ node_modules/
 dist/win-unpacked/
 dist/builder-debug.yml
 dist/*.blockmap
+dist/latest*.yml
+dist/__uninstaller*
+dist/*.exe
+!dist/PineNotes-Portable-1.0.0.exe
 *.log
